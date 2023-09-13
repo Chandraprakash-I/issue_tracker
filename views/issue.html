@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Issue Tracker - Project Page</title>
-    <link rel="icon" type="image/png" href="https://cdn.freecodecamp.org/universal/favicons/favicon-16x16.png" />
+    <title>Tracker - Project Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,6 +36,7 @@
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>
     <script>
+    
       $(function() {
         let currentProject = window.location.pathname.replace(/\//g, "");;
         let url = "/api/issues/"+currentProject;
@@ -44,6 +46,7 @@
           url: url,
           success: function(data)
           {
+            console.log('sucess');
             let issues= [];
             data.forEach(function(ele) {
               console.log(ele);
@@ -82,11 +85,12 @@
         
         $('#issueDisplay').on('click','.closeIssue', function(e) {
           let url = "/api/issues/"+currentProject;
+          console.log('here inside put');
           $.ajax({
             type: "PUT",
             url: url,
             data: {_id: $(this).attr('id'), open: false},
-            success: function(data) { alert(data); window.location.reload(true); }
+            success: function(data) {  console.log('here inside puts'); alert(data); window.location.reload(true); }
           });
           e.preventDefault();
         });

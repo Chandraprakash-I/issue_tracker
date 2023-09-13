@@ -6,9 +6,10 @@ const expect      = require('chai').expect;
 const cors        = require('cors');
 require('dotenv').config();
 
-const apiRoutes         = require('./routes/api.js');
+
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
+const apiRoutes         = require('./routes/api.js');
 
 let app = express();
 
@@ -21,11 +22,29 @@ app.use(cors({origin: '*'})); //For FCC testing purposes only
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Sample front-end
-app.route('/:project/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/issue.html');
-  });
+//DATABASE CONNECTIION
+
+const mongoose=require('mongoose');
+mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopology: true});
+const db=mongoose.connection;
+ db.on('connected', async () => {
+  console.log('Mongoose connected to database');
+  
+  
+  
+});
+db.on('error',(err) => {
+  console.log('Error in connecting to database.');
+});
+db.on('disconnected',() => {
+  console.log('Mongoose disconnected');
+});
+
+
+
+apiRoutes(app);
+
+
 
 //Index page (static HTML)
 app.route('/')
@@ -33,11 +52,12 @@ app.route('/')
     res.sendFile(process.cwd() + '/views/index.html');
   });
 
+
+
 //For FCC testing purposes
 fccTestingRoutes(app);
 
-//Routing for API 
-apiRoutes(app);  
+ 
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
